@@ -72,4 +72,32 @@ router.get("/", (req, res) => {
     );
 });
 
+// GET ("/api/posts/:id/comments")
+router.get("/:id/comments", (req, res) => {
+  Data.findById(req.params.id)
+    .then((post) => {
+      console.log(post);
+      Data.findPostComments(post[0].id)
+        .then((comments) => {
+          if (comments.length > 0) {
+            res.status(200).json(comments);
+          } else {
+            res
+              .status(200)
+              .json({ message: "There are no comments for this post." });
+          }
+        })
+        .catch(() =>
+          res
+            .status(500)
+            .json({ error: "The comments information could not be retrieved." })
+        );
+    })
+    .catch(() =>
+      res
+        .status(404)
+        .json({ message: "The post with the specified ID does not exist." })
+    );
+});
+
 module.exports = router;
